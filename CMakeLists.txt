@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.0)
-project(Starlight VERSION 0.1.0 LANGUAGES C CXX)
+project(Ballade VERSION 0.1.0 LANGUAGES C CXX)
 
 set(ARCHIVE_DIRECTORY libs)
 set(PDB_DIRECTORY pdbs)
