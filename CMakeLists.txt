@@ -31,11 +31,19 @@ endforeach( OUTCONF )
 set(CMAKE_PREFIX_PATH libs/)
 add_subdirectory(libs)
 
+find_package(glbinding REQUIRED)
+
 ##	Demo
 add_executable(Demo)
 
+target_link_libraries(Demo glfw glbinding::glbinding glm)
 target_include_directories(Demo PRIVATE include)
-target_sources(Demo 
+target_sources(Demo
+	PRIVATE src/ext/stb_image.write.cpp
+
+	PRIVATE src/gfx/shaders.cpp
+	PRIVATE src/gfx/model.cpp
+
 	PRIVATE src/demo.cpp
 )
 
