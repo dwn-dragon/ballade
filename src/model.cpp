@@ -1,4 +1,5 @@
-#include "gfx/model.h"
+#include "model.h"
+
 #include "ext/stl_reader.h"
 
 constexpr size_t VERTICES_PER_TRIANGLE = 3;

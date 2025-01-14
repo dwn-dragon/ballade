@@ -42,8 +42,8 @@ target_sources(Demo
 	PRIVATE src/ext/stb_image.write.cpp
 
 	PRIVATE src/gfx/shaders.cpp
-	PRIVATE src/gfx/model.cpp
 
+	PRIVATE src/model.cpp
 	PRIVATE src/demo.cpp
 )
 

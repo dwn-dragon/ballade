@@ -1,8 +1,9 @@
-#include "demo.h"
-
 #include "gfx/header.h"
 #include "gfx/shaders.h"
-#include "gfx/model.h"
+
+#include "model.h"
+#include "demo.h"
+
 
 #include <iostream>
 #include <chrono>
