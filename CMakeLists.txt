@@ -36,8 +36,13 @@ find_package(glbinding REQUIRED)
 ##	Demo
 add_executable(Demo)
 
-target_link_libraries(Demo glfw glbinding::glbinding glm)
-target_include_directories(Demo PRIVATE include)
+target_include_directories(Demo 
+	PRIVATE include
+)
+target_link_libraries(Demo 
+	glfw glbinding::glbinding glm
+	CLI11
+)
 target_sources(Demo
 	PRIVATE src/ext/stb_image.write.cpp
 
