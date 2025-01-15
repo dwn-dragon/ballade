@@ -35,6 +35,7 @@ find_package(glbinding REQUIRED)
 
 ##	Demo
 add_executable(Demo)
+set_target_properties(Demo PROPERTIES OUTPUT_NAME "ballade")
 
 target_include_directories(Demo 
 	PRIVATE include
