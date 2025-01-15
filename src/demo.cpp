@@ -5,6 +5,7 @@
 #include "demo.h"
 
 #include <CLI/CLI.hpp>
+#include <mini/ini.h>
 
 #include <iostream>
 #include <chrono>
@@ -158,7 +159,7 @@ int main (int argc, char* argv[]) {
 		gl::glClearColor(COLOR_OUTPUT_CLEAR[0], COLOR_OUTPUT_CLEAR[1], COLOR_OUTPUT_CLEAR[2], COLOR_OUTPUT_CLEAR[3]);
 
 		//	generates and sets the projection matrix
-		auto projectionMat = glm::ortho<float>(0, SCREEN_DIM_W, 0, SCREEN_DIM_H);
+		auto projectionMat = glm::ortho<float>(0, SCREEN_DIM_W, SCREEN_DIM_H, 0);
 		gl::glUniformMatrix4fv(uniProjectionLoc, 1, gl::GL_FALSE, glm::value_ptr(projectionMat));
 
 		//	generates and sets the model matrix
