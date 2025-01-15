@@ -8,6 +8,3 @@ add_subdirectory(glm)
 
 #	CLI parser
 add_subdirectory(CLI11)
-
-#	INI parser
-add_subdirectory(mINI)

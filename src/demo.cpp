@@ -5,7 +5,6 @@
 #include "demo.h"
 
 #include <CLI/CLI.hpp>
-#include <mini/ini.h>
 
 #include <iostream>
 #include <chrono>
@@ -78,13 +77,17 @@ constexpr char* BOARD_LAYERS[] = {
 	"E:\\3D\\STLs\\PCBs\\Imported\\1-copper.stl"
 };
 
+constexpr char* CONFIG_FILE = "config.ini";
+
 int main (int argc, char* argv[]) {
-	CLI::App args;
-
-	//	should generate the files or not
+	//	generation flag
 	bool gen = false;
-	args.add_flag("-g,--generate", gen, "Generates output pngs");
 
+	//	arguments parser
+	CLI::App args;
+	//	should generate the files or not
+	args.add_flag("-g,--generate", gen, "Generates output pngs");
+	//	parses
 	CLI11_PARSE(args, argc, argv);
 
 	//	sets exit function
