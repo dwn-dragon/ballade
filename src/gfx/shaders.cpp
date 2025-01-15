@@ -6,11 +6,10 @@ constexpr char* SHADER_VERTEX_SOURCE =
     "layout (location = 0) in vec2 inPos;\n"
 
 	"uniform mat4 uniModel;\n"
-	"uniform mat4 uniView;\n"
 	"uniform mat4 uniProjection;\n"
 	
     "void main() {\n"
-    "   gl_Position = uniProjection * uniView * uniModel * vec4(inPos.x, inPos.y, 0.0, 1.0);\n"
+    "   gl_Position = uniProjection * uniModel * vec4(inPos.x, inPos.y, 0.0, 1.0);\n"
     "}\0";
 
 constexpr char* SHADER_FRAGMENT_SOURCE =
