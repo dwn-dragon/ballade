@@ -142,10 +142,11 @@ int main (int argc, char* argv[]) {
 		gl::glBindFramebuffer(gl::GL_FRAMEBUFFER, fbo);
 
 		//	texture object to read the data from
+		//	the output pngs are grayscales, no need to use more one than color channel
 		gl::GLuint texOut;
 		gl::glGenTextures(1, &texOut);
 		gl::glBindTexture(gl::GL_TEXTURE_2D, texOut);
-		gl::glTexImage2D(gl::GL_TEXTURE_2D, 0, gl::GL_RGB, SCREEN_RES_W, SCREEN_RES_H, 0, gl::GL_RGB, gl::GL_UNSIGNED_BYTE, nullptr);
+		gl::glTexImage2D(gl::GL_TEXTURE_2D, 0, gl::GL_RED, SCREEN_RES_W, SCREEN_RES_H, 0, gl::GL_RED, gl::GL_UNSIGNED_BYTE, nullptr);
 		gl::glTexParameteri(gl::GL_TEXTURE_2D, gl::GL_TEXTURE_MIN_FILTER, gl::GL_LINEAR );
 		gl::glTexParameteri(gl::GL_TEXTURE_2D, gl::GL_TEXTURE_MAG_FILTER, gl::GL_LINEAR);
 		gl::glFramebufferTexture2D(gl::GL_FRAMEBUFFER, gl::GL_COLOR_ATTACHMENT0, gl::GL_TEXTURE_2D, texOut, 0);
@@ -173,8 +174,10 @@ int main (int argc, char* argv[]) {
 		//	sets the correct color
 		gl::glUniform4fv(uniColorLoc, 1, glm::value_ptr(COLOR_OUTPUT_DRAW));
 
+		stbi_write_png_compression_level = 16;
+
 		//	pre allocs pixel memory
-		auto data = std::make_unique<uint8_t[]>(SCREEN_RES_W*SCREEN_RES_H*3);
+		auto data = std::make_unique<uint8_t[]>(SCREEN_RES_W * SCREEN_RES_H * 1);
 		//	draws each layer
 		for (size_t i = 0; i < len; i++) {
 			//	clears texture
@@ -187,8 +190,8 @@ int main (int argc, char* argv[]) {
 			name += std::to_string(i);
 			name += ".png";
 			//	saves the rendered image
-			gl::glGetTextureImage(texOut, 0, gl::GL_RGB, gl::GL_UNSIGNED_BYTE, SCREEN_RES_W * SCREEN_RES_H * 3, data.get());
-			stbi_write_png(name.c_str(), SCREEN_RES_W, SCREEN_RES_H, 3, data.get(), SCREEN_RES_W * 3);
+			gl::glGetTextureImage(texOut, 0, gl::GL_RED, gl::GL_UNSIGNED_BYTE, SCREEN_RES_W * SCREEN_RES_H * 1, data.get());
+			stbi_write_png(name.c_str(), SCREEN_RES_W, SCREEN_RES_H, 1, data.get(), SCREEN_RES_W * 1);
 		}
 
 
