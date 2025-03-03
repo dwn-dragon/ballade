@@ -45,7 +45,7 @@ target_link_libraries(Demo
 	CLI11
 )
 target_sources(Demo
-	PRIVATE src/ext/stb_image.write.cpp
+	PRIVATE src/ext/stb_image_write.cpp
 
 	PRIVATE src/gfx/shaders.cpp
 
