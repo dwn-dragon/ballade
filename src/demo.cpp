@@ -73,8 +73,8 @@ constexpr size_t VERTICES_PER_TRIANGLE = 3;
 constexpr size_t DIMENSIONS_PER_VERTEX = 2;
 
 constexpr char* BOARD_LAYERS[] = {
-	"E:\\3D\\STLs\\PCBs\\Imported\\Board.stl",
-	"E:\\3D\\STLs\\PCBs\\Imported\\1-copper.stl"
+	"F:\\Apps\\KiCad\\Projects\\TestPCB\\STLs\\Board.stl",
+	"F:\\Apps\\KiCad\\Projects\\TestPCB\\STLs\\1-copper.stl"
 };
 
 constexpr char* CONFIG_FILE = "config.ini";

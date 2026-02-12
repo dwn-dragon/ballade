@@ -1,6 +1,9 @@
 ##	Libs subdirectory
 #	include here the libraries
 
+#	External misc headers
+add_subdirectory(external)
+
 #	Graphics libraries
 add_subdirectory(glfw)
 add_subdirectory(glbinding)

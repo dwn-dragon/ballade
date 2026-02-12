@@ -43,10 +43,9 @@ target_include_directories(Demo
 target_link_libraries(Demo 
 	glfw glbinding::glbinding glm
 	CLI11
+	External
 )
 target_sources(Demo
-	PRIVATE src/ext/stb_image_write.cpp
-
 	PRIVATE src/gfx/shaders.cpp
 
 	PRIVATE src/model.cpp
