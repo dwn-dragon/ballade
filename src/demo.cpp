@@ -72,12 +72,25 @@ constexpr float
 constexpr size_t VERTICES_PER_TRIANGLE = 3;
 constexpr size_t DIMENSIONS_PER_VERTEX = 2;
 
+constexpr char* BOARD_CUTOUT = "F:\\Apps\\KiCad\\Projects\\TestPCB\\STLs\\Board.stl";
+
 constexpr char* BOARD_LAYERS[] = {
-	"F:\\Apps\\KiCad\\Projects\\TestPCB\\STLs\\Board.stl",
 	"F:\\Apps\\KiCad\\Projects\\TestPCB\\STLs\\1-copper.stl"
 };
 
 constexpr char* CONFIG_FILE = "config.ini";
+
+template< class Ty >
+struct array_info_t
+{
+	static constexpr bool is_array = false;
+};
+template< class Ty, size_t Len >
+struct array_info_t<typename Ty[Len]>
+{
+	static constexpr bool is_array = true;
+	static constexpr size_t length = Len;
+};
 
 int main (int argc, char* argv[]) {
 	//	generation flag
@@ -127,12 +140,15 @@ int main (int argc, char* argv[]) {
 	auto uniProjectionLoc	= gl::glGetUniformLocation(shader, "uniProjection");
 	auto uniColorLoc 		= gl::glGetUniformLocation(shader, "uniColor");
 
-	//	loads the board's stls
-	size_t len = 2, cutout = 0;
+	//	number of models
+	size_t len = array_info_t<decltype(BOARD_LAYERS)>::length + 1, cutout = 0;
 	auto layers = std::make_unique<Model[]>(len);
-	for (size_t i = 0; i < len; i++) {
+
+	//	loads the board cutout
+	layers[cutout] = Model::load(BOARD_CUTOUT);
+	//	loads the board layers
+	for (size_t i = 1; i < len; i++)
 		layers[i] = Model::load(BOARD_LAYERS[i]);
-	}
 
 	if (gen) {
 		//	generates the pngs
