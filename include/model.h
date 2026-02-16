@@ -9,10 +9,13 @@ struct Model
 {
 	static Model load(const char* filepath);
 
-	gl::GLuint vao, vbo;
-	gl::GLsizei vc;
-
+	//	Number of vertices in the model
+	gl::GLsizei vertices;
+	//	Coordinates of the bounding box
 	float x1, x2, y1, y2;
+
+	//	OpenGL buffers
+	gl::GLuint vao, vbo;
 };
 
 #endif	//	Include guard
