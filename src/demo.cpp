@@ -220,85 +220,19 @@ int main (int argc, char* argv[]) {
 
 	//	models
 	//	rect
-	gl::GLuint rect_vao, rect_vbo;
-	gl::glGenVertexArrays(1, &rect_vao);
-	gl::glBindVertexArray(rect_vao);
+	Model rect;
 
-	gl::glGenBuffers(1, &rect_vbo);
-	gl::glBindBuffer(gl::GL_ARRAY_BUFFER, rect_vbo);
-	gl::glBufferData(gl::GL_ARRAY_BUFFER, sizeof(RECT_VERTICES), RECT_VERTICES, gl::GL_STATIC_DRAW);
+	gl::glGenVertexArrays(1, &rect.vao);
+	gl::glBindVertexArray(rect.vao);
 
-	gl::glVertexAttribPointer(0, 2, gl::GL_FLOAT, gl::GL_FALSE, 2 * sizeof(float), (void*)0);
+	gl::glGenBuffers(1, &rect.vbo);
+	gl::glBindBuffer(gl::GL_ARRAY_BUFFER, rect.vbo);
+
+	rect.vertices = array_info_t<decltype(RECT_VERTICES)>::length;
+	gl::glBufferData(gl::GL_ARRAY_BUFFER, sizeof(RECT_VERTICES), (void*)(rect.vertices), gl::GL_STATIC_DRAW);
+
+	gl::glVertexAttribPointer(0, 2, gl::GL_FLOAT, gl::GL_FALSE, 2 * sizeof(float), (void*)(0));
 	gl::glEnableVertexAttribArray(0);
-
-	//	maps the screen dimension to mm using the scaled printer's plate
-	float win_res_w = WIN_WIDTH, win_res_h = WIN_HEIGHT;
-	float scr_res_w = SCREEN_WIN_RATIO_W * WIN_WIDTH, scr_res_h = SCREEN_WIN_RATIO_H * WIN_HEIGHT;
-	float scr_dim_w = SCREEN_DIM_W, scr_dim_h = SCREEN_DIM_H;
-
-	float win_dim_w = scr_dim_w*win_res_w/scr_res_w, win_dim_h = scr_dim_h*win_res_h/scr_res_h;
-	float diff_w = (win_dim_w-scr_dim_w) / 2, diff_h = (win_dim_h-scr_dim_h) / 2;
-	
-	float wn = 0-diff_w, wp = scr_dim_w+diff_w;
-	float hn = 0-diff_h, hp = scr_dim_h+diff_h;
-
-	auto projectionMat = glm::ortho(wn,wp,hn,hp);
-	gl::glUniformMatrix4fv(uniProjectionLoc, 1, gl::GL_FALSE, glm::value_ptr(projectionMat));
-
-	//	makes the window visible now
-	glfwShowWindow(window);
-
-	//	main loop
-	using _clk = std::chrono::steady_clock;
-
-	auto time = _clk::now();
-	std::chrono::duration<float, std::milli> dt;
-
-	while (true) {
-		glfwPollEvents();
-
-		if (glfwWindowShouldClose(window))
-			break;
-
-		auto now = _clk::now();
-		dt += (now - time);
-
-		if (dt >= RENDER_DELAY) {
-			dt -= RENDER_DELAY;
-
-			//	model mat
-			auto modelMat = glm::mat4{ 1 };
-			//	clears color buffer
-			gl::glClear(gl::GL_COLOR_BUFFER_BIT);
-			//	renders the base plane
-			modelMat = glm::mat4{ 1 };
-			modelMat = glm::scale(modelMat, { scr_dim_w, scr_dim_h, 0 });	//	scales the rectangle to the plate's dimensions in mm
-			modelMat = glm::translate(modelMat, { 0.5, 0.5, 0 });			//	centers the rectangle to 0.5 0.5
-			gl::glUniformMatrix4fv(uniModelLoc, 1, gl::GL_FALSE, glm::value_ptr(modelMat));
-
-			gl::glUniform4fv(uniColorLoc, 1, glm::value_ptr(COLOR_PLANE));
-
-			gl::glBindVertexArray(rect_vao);
-			gl::glDrawArrays(gl::GL_TRIANGLES, 0, 6);
-
-			//	board cutout
-			modelMat = glm::mat4{ 1 };
-			modelMat = glm::translate(modelMat, { -layers[cutout].x1, -layers[cutout].y1, 0 });			//	centers the rectangle to 0.5 0.5
-			gl::glUniformMatrix4fv(uniModelLoc, 1, gl::GL_FALSE, glm::value_ptr(modelMat));
-
-			gl::glUniform4fv(uniColorLoc, 1, glm::value_ptr(COLOR_CUTOUT));
-			gl::glBindVertexArray(layers[0].vao);
-			gl::glDrawArrays(gl::GL_TRIANGLES, 0, layers[0].vc);
-			//	board copper front
-			//	doesn't reset the model mat as the layers are aligned
-			gl::glUniform4fv(uniColorLoc, 1, glm::value_ptr(COLOR_COPPER_F));
-			gl::glBindVertexArray(layers[1].vao);
-			gl::glDrawArrays(gl::GL_TRIANGLES, 0, layers[1].vc);
-
-			//	shows the new rendered scene
-			glfwSwapBuffers(window);
-		}
-	}
 	
 	return 0;
 }
