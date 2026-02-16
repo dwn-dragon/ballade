@@ -69,6 +69,9 @@ constexpr float
 	SCREEN_WIN_RATIO_W = 0.9f,
 	SCREEN_WIN_RATIO_H = 0.9f;
 
+using dtime_t = std::chrono::duration<float, std::milli>;
+constexpr dtime_t RENDER_DELAY{ 1.0f / 60.0f };
+
 constexpr size_t VERTICES_PER_TRIANGLE = 3;
 constexpr size_t DIMENSIONS_PER_VERTEX = 2;
 
@@ -113,7 +116,7 @@ int main (int argc, char* argv[]) {
 	}
 
 	//	inits window
-	glfwWindowHint(GLFW_VISIBLE, (gen) ? GLFW_FALSE : GLFW_TRUE);
+	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 	auto window = glfwCreateWindow(WIN_WIDTH, WIN_HEIGHT, "Title", nullptr, nullptr);
 	if (!window) {
 		std::cerr << "Window creation error" << std::endl;
@@ -242,42 +245,59 @@ int main (int argc, char* argv[]) {
 	auto projectionMat = glm::ortho(wn,wp,hn,hp);
 	gl::glUniformMatrix4fv(uniProjectionLoc, 1, gl::GL_FALSE, glm::value_ptr(projectionMat));
 
+	//	makes the window visible now
+	glfwShowWindow(window);
+
 	//	main loop
-	while (!glfwWindowShouldClose(window)) {
-		std::this_thread::sleep_for( std::chrono::milliseconds(10) );
+	using _clk = std::chrono::steady_clock;
+
+	auto time = _clk::now();
+	std::chrono::duration<float, std::milli> dt;
+
+	while (true) {
 		glfwPollEvents();
-		
-		//	model mat
-		auto modelMat = glm::mat4{ 1 };
-		//	clears color buffer
-		gl::glClear(gl::GL_COLOR_BUFFER_BIT);
-		//	renders the base plane
-		modelMat = glm::mat4{ 1 };
-		modelMat = glm::scale(modelMat, { scr_dim_w, scr_dim_h, 0 });	//	scales the rectangle to the plate's dimensions in mm
-		modelMat = glm::translate(modelMat, { 0.5, 0.5, 0 });			//	centers the rectangle to 0.5 0.5
-		gl::glUniformMatrix4fv(uniModelLoc, 1, gl::GL_FALSE, glm::value_ptr(modelMat));
 
-		gl::glUniform4fv(uniColorLoc, 1, glm::value_ptr(COLOR_PLANE));
+		if (glfwWindowShouldClose(window))
+			break;
 
-		gl::glBindVertexArray(rect_vao);
-		gl::glDrawArrays(gl::GL_TRIANGLES, 0, 6);
+		auto now = _clk::now();
+		dt += (now - time);
 
-		//	board cutout
-		modelMat = glm::mat4{ 1 };
-		modelMat = glm::translate(modelMat, { -layers[cutout].x1, -layers[cutout].y1, 0 });			//	centers the rectangle to 0.5 0.5
-		gl::glUniformMatrix4fv(uniModelLoc, 1, gl::GL_FALSE, glm::value_ptr(modelMat));
+		if (dt >= RENDER_DELAY) {
+			dt -= RENDER_DELAY;
 
-		gl::glUniform4fv(uniColorLoc, 1, glm::value_ptr(COLOR_CUTOUT));
-		gl::glBindVertexArray(layers[0].vao);
-		gl::glDrawArrays(gl::GL_TRIANGLES, 0, layers[0].vc);
-		//	board copper front
-		//	doesn't reset the model mat as the layers are aligned
-		gl::glUniform4fv(uniColorLoc, 1, glm::value_ptr(COLOR_COPPER_F));
-		gl::glBindVertexArray(layers[1].vao);
-		gl::glDrawArrays(gl::GL_TRIANGLES, 0, layers[1].vc);
+			//	model mat
+			auto modelMat = glm::mat4{ 1 };
+			//	clears color buffer
+			gl::glClear(gl::GL_COLOR_BUFFER_BIT);
+			//	renders the base plane
+			modelMat = glm::mat4{ 1 };
+			modelMat = glm::scale(modelMat, { scr_dim_w, scr_dim_h, 0 });	//	scales the rectangle to the plate's dimensions in mm
+			modelMat = glm::translate(modelMat, { 0.5, 0.5, 0 });			//	centers the rectangle to 0.5 0.5
+			gl::glUniformMatrix4fv(uniModelLoc, 1, gl::GL_FALSE, glm::value_ptr(modelMat));
 
-		//	shows the new rendered scene
-		glfwSwapBuffers(window);
+			gl::glUniform4fv(uniColorLoc, 1, glm::value_ptr(COLOR_PLANE));
+
+			gl::glBindVertexArray(rect_vao);
+			gl::glDrawArrays(gl::GL_TRIANGLES, 0, 6);
+
+			//	board cutout
+			modelMat = glm::mat4{ 1 };
+			modelMat = glm::translate(modelMat, { -layers[cutout].x1, -layers[cutout].y1, 0 });			//	centers the rectangle to 0.5 0.5
+			gl::glUniformMatrix4fv(uniModelLoc, 1, gl::GL_FALSE, glm::value_ptr(modelMat));
+
+			gl::glUniform4fv(uniColorLoc, 1, glm::value_ptr(COLOR_CUTOUT));
+			gl::glBindVertexArray(layers[0].vao);
+			gl::glDrawArrays(gl::GL_TRIANGLES, 0, layers[0].vc);
+			//	board copper front
+			//	doesn't reset the model mat as the layers are aligned
+			gl::glUniform4fv(uniColorLoc, 1, glm::value_ptr(COLOR_COPPER_F));
+			gl::glBindVertexArray(layers[1].vao);
+			gl::glDrawArrays(gl::GL_TRIANGLES, 0, layers[1].vc);
+
+			//	shows the new rendered scene
+			glfwSwapBuffers(window);
+		}
 	}
 	
 	return 0;
