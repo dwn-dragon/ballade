@@ -203,7 +203,7 @@ int main (int argc, char* argv[]) {
 			gl::glClear(gl::GL_COLOR_BUFFER_BIT);
 			//	renders the i-th layer
 			gl::glBindVertexArray(layers[i].vao);
-			gl::glDrawArrays(gl::GL_TRIANGLES, 0, layers[i].vc);
+			gl::glDrawArrays(gl::GL_TRIANGLES, 0, layers[i].vertices);
 			//	name generation
 			std::string name = "layer_";
 			name += std::to_string(i);
@@ -229,7 +229,7 @@ int main (int argc, char* argv[]) {
 	gl::glBindBuffer(gl::GL_ARRAY_BUFFER, rect.vbo);
 
 	rect.vertices = array_info_t<decltype(RECT_VERTICES)>::length;
-	gl::glBufferData(gl::GL_ARRAY_BUFFER, sizeof(RECT_VERTICES), (void*)(rect.vertices), gl::GL_STATIC_DRAW);
+	gl::glBufferData(gl::GL_ARRAY_BUFFER, sizeof(RECT_VERTICES), RECT_VERTICES, gl::GL_STATIC_DRAW);
 
 	gl::glVertexAttribPointer(0, 2, gl::GL_FLOAT, gl::GL_FALSE, 2 * sizeof(float), (void*)(0));
 	gl::glEnableVertexAttribArray(0);
