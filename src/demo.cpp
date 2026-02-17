@@ -151,7 +151,7 @@ int main (int argc, char* argv[]) {
 	layers[cutout] = Model::load(BOARD_CUTOUT);
 	//	loads the board layers
 	for (size_t i = 1; i < len; i++)
-		layers[i] = Model::load(BOARD_LAYERS[i]);
+		layers[i] = Model::load(BOARD_LAYERS[i - 1]);
 
 	if (gen) {
 		//	generates the pngs
